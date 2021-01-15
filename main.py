@@ -15,6 +15,7 @@
 
 import requests
 from datetime import datetime
+from flask import Flask, render_template, request
 
 USERNAME = "beazer"
 TOKEN = "q03849htqiu4&paq3q4$9"
@@ -49,22 +50,42 @@ headers = {
 # response = requests.post(url=graph_endpoint, json=graph_config, headers=headers)
 # print(response.text)
 
+# Website link
+app = Flask(__name__)
 
-post_endpoint = f"{pixela_endpoint}/{USERNAME}/graphs/{GRAPH_ID}"
 
-today = datetime.now()
-print(today.strftime("%Y%m%d"))
 
-post_config = {
-    "date": today.strftime("%Y%m%d"),
-    "quantity": input("How many minutes did you code today? "),
-}
+@app.route('/', methods=["GET", "POST"])
+def home():
+    global pixela_endpoint
+    global USERNAME
+    global GRAPH_ID
+    post_endpoint = f"{pixela_endpoint}/{USERNAME}/graphs/{GRAPH_ID}"
+    today = datetime.now()
 
-response = requests.post(url=post_endpoint, json=post_config, headers=headers)
-print(response.text)
+    if request.method == "POST":
+        start_time = request.form['start']
+        end_time = request.form['end']
+        fmt = '%H:%M'
+        time_delta = datetime.strptime(end_time, fmt) - datetime.strptime(start_time, fmt)
+        total_seconds = time_delta.total_seconds()
+        duration = total_seconds / 60
+        int_duration = int(duration)
+        print(int_duration)
+
+        # Post to Pixela
+        post_config = {
+            "date": today.strftime("%Y%m%d"),
+            "quantity": f"{int_duration}",
+        }
+        response = requests.post(url=post_endpoint, json=post_config, headers=headers)
+        print(response.text)
+        return render_template("index.html", duration=duration)
+    return render_template("index.html")
 
 
 # UPDATE A POST
+today = datetime.now()
 
 update_endpoint = f"{pixela_endpoint}/{USERNAME}/graphs/{GRAPH_ID}/{today.strftime('%Y%m%d')}"
 
@@ -74,3 +95,6 @@ update_config = {
 
 # response = requests.put(url=update_endpoint, json=update_config, headers=headers)
 # print(response.text)
+
+if __name__ == "__main__":
+    app.run(debug=True)

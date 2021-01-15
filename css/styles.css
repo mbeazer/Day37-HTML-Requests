@@ -1,0 +1,13 @@
+body {
+    background-color: #74b9ff;
+    text-align: left;
+    font-family: 'Roboto', sans-serif;
+    font-size: 150%;
+    width: 60%;
+    right: 30%;
+}
+
+.FieldLabel {
+    width: 60%;
+    right: 30%;
+}
