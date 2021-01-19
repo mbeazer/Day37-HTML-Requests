@@ -1,0 +1,26 @@
+body {
+    padding: 5%;
+    background-color: #196ca4;
+    color: #FFF
+}
+
+.title-text {
+    text-align: center;
+}
+
+.text-label {
+    text-align: right;
+    padding: 10px;
+    font-size: 1.2rem;
+}
+
+.ok-button {
+    text-align: center;
+    padding: 10px;
+}
+
+.time-field {
+    text-align: left;
+    padding: 10px;
+    font-size: 1.2rem;
+}
