@@ -36,12 +36,30 @@
                     <input type="text" placeholder="end time" name="end">
                 </div>
             </div>
+
+            <!-- BUTTONS -->
+
             <div class="row">
-                <div class="col-sm ok-button">
-                    <button type="submit">Ok</button>
+                <div class="col-sm add-button">
+                    <button type="submit" class="btn btn-outline-light" name="submit_button" value="add_time">+ Add time</button>
+                </div>
+                <div class="col-sm reset-button">
+                    <button type="submit" class="btn btn-outline-secondary" name="submit_button" value="reset_time">- Reset time</button>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-sm ok-button">
+                    <button type="submit" class="btn btn-light" name="submit_button" value="send_to_pixela">Submit</button>
+                </div>
+            </div>
+
+
         </form>
+        <div class="row">
+            <div class="col-sm ok-button">
+                <label>Current coding time: {{ duration }} min.</label>
+            </div>
+        </div>
         <div class="row">
             <div class="col-sm ok-button">
                 <a href="https://pixe.la/v1/users/beazer/graphs/graph1.html">Link to Pixela chart</a>

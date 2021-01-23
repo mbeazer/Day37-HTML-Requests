@@ -53,6 +53,7 @@ headers = {
 # Website link
 app = Flask(__name__)
 
+INT_DURATION = 0
 
 
 @app.route('/', methods=["GET", "POST"])
@@ -60,28 +61,44 @@ def home():
     global pixela_endpoint
     global USERNAME
     global GRAPH_ID
+    global INT_DURATION
     post_endpoint = f"{pixela_endpoint}/{USERNAME}/graphs/{GRAPH_ID}"
-    today = datetime.now()
+    this_day = datetime.now()
 
     if request.method == "POST":
-        start_time = request.form['start']
-        end_time = request.form['end']
-        fmt = '%H:%M'
-        time_delta = datetime.strptime(end_time, fmt) - datetime.strptime(start_time, fmt)
-        total_seconds = time_delta.total_seconds()
-        duration = total_seconds / 60
-        int_duration = int(duration)
-        print(int_duration)
 
-        # Post to Pixela
-        post_config = {
-            "date": today.strftime("%Y%m%d"),
-            "quantity": f"{int_duration}",
-        }
-        response = requests.post(url=post_endpoint, json=post_config, headers=headers)
-        print(response.text)
-        return render_template("index.html", duration=duration)
-    return render_template("index.html")
+        if request.form["submit_button"] == "send_to_pixela":
+            # Post to Pixela
+            print(f"duration being sent to pixela: {INT_DURATION}")
+            post_config = {
+                "date": this_day.strftime("%Y%m%d"),
+                "quantity": f"{INT_DURATION}",
+            }
+            response = requests.post(url=post_endpoint, json=post_config, headers=headers)
+            print(response.text)
+            print(f"sent {INT_DURATION} to pixela")
+            INT_DURATION = 0
+            print("Reset INT_DURATION")
+            return render_template("index.html", duration=INT_DURATION)
+
+        elif request.form["submit_button"] == "add_time":
+            start_time = request.form['start']
+            end_time = request.form['end']
+            fmt = '%H:%M'
+            time_delta = datetime.strptime(end_time, fmt) - datetime.strptime(start_time, fmt)
+            total_seconds = time_delta.total_seconds()
+            duration = total_seconds / 60
+            INT_DURATION += int(duration)
+            print(f"duration sent from add time: {INT_DURATION}")
+            return render_template("index.html", duration=INT_DURATION)
+
+        elif request.form["submit_button"] == "reset_time":
+            INT_DURATION = 0
+            print(f"duration reset to: {INT_DURATION}")
+            return render_template("index.html", duration=INT_DURATION)
+
+    elif request.method == "GET":
+        return render_template("index.html", duration=0)
 
 
 # UPDATE A POST
